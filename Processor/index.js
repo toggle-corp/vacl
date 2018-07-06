@@ -23,9 +23,11 @@ export default class Processor {
 
     resolveNode = (node) => {
         if (node.nodeType === 'variable') {
+            // TODO runtime check for data type
             return {
-                ...this.context[node.value],
                 nodeType: 'constant',
+                dataType: node.dataType,
+                value: this.context[node.value],
             };
         }
         return {

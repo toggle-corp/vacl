@@ -1,16 +1,30 @@
-import Lexer from './Lexer';
-import Parser from './Parser';
-import SemanticAnalyzer from './SemanticAnalyzer';
-import Processor from './Processor';
+import { compile, run } from '.';
 
 test('compiles properly', () => {
-    const lexer = new Lexer('2+3 >= 5 AND -6-7 = -13');
-    const parser = new Parser(lexer.tokenize().getTokens());
-    const sa = new SemanticAnalyzer(parser.parse().getAst());
-    const processor = new Processor(sa.analyze().getTree());
-    const result = processor.execute().getResult();
-    expect(result).toEqual({
+    const script = '2+foo >= 5 AND -6-bar = -13';
+
+    const tree = compile(script, {
+        foo: 'number',
+        bar: 'number',
+    });
+
+    const result1 = run(tree, {
+        foo: 3,
+        bar: 7,
+    });
+
+    const result2 = run(tree, {
+        foo: 2,
+        bar: 7,
+    });
+
+    expect(result1).toEqual({
         value: true,
+        dataType: 'boolean',
+    });
+
+    expect(result2).toEqual({
+        value: false,
         dataType: 'boolean',
     });
 });
